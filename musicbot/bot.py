@@ -8,6 +8,7 @@ import aiohttp
 import discord
 import asyncio
 import traceback
+import datetime
 
 from discord import utils
 from discord.object import Object
@@ -1784,13 +1785,13 @@ class MusicBot(discord.Client):
         return Response(":hear_no_evil:", delete_after=20)
 
     async def cmd_restart(self, author, channel):
-     for s in self.servers:
+    for s in self.servers:
         await self.safe_send_message(s, "I Am Restarting , Be Right Back :arrows_counterclockwise:")
         await self.disconnect_all_voice_clients()
-        raise exceptions.RestartSignal
+
 
     async def cmd_shutdown(self, author, channel):
-     for s in self.servers:
+    for s in self.servers:
         await self.safe_send_message(s, "I Am Shutting Down Good,Bye :no_entry:")
         await self.disconnect_all_voice_clients()
         raise exceptions.TerminateSignal
@@ -1994,13 +1995,25 @@ class MusicBot(discord.Client):
 
             await self.reconnect_voice_client(after)
 
-    async def cmd_ping(self):
+    async def cmd_ping(self,message):
         """
         Usage:
             {command_prefix}ping
         Ping command to test latency
         """
-        return Response("Pong!")
+        def mcrs(timeVar):
+            return(float("%s.%s"%(timeVar.second,timeVar.microsecond)))
+
+        delta = ((mcrs(datetime.datetime.utcnow())) - (mcrs(message.timestamp))/1000)
+        return Response("Pong! %.1fms"%(delta))
+
+    async def cmd_info(self,message):
+        """
+        Usage:
+            {command_prefix}info
+        Info about the songs
+        """
+        return Response("Songs In Playlist Provided By NCS")
 
 if __name__ == '__main__':
     bot = MusicBot()
